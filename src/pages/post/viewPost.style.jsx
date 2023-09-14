@@ -7,6 +7,7 @@ export const WrapperViewPost = styled.div`
 	box-sizing: border-box;
 `;
 
+// 게시글 작성에도 동일한 컴포넌트가 사용되니 묶어서 정리할 것
 export const ProfileImagePost = styled.img`
 	display: block;
 	width: 42px;
@@ -88,7 +89,7 @@ export const CommentText = styled.p`
 	line-height: 1.3em;
 `;
 
-export const UploadComment = styled.section`
+export const UploadComment = styled.div`
 	width: 390px;
 	box-sizing: border-box;
 	background-color: #fff;
@@ -130,10 +131,9 @@ export const CommentUploadButton = styled.button`
 	font-family: 'Suit-Bold';
 	width: 40px;
 	border: none;
-	background-color: #81d8d0;
-	border-radius: 5px;
-	color: #fff;
+	background-color: #fff;
+	color: #81d8d0;
 	cursor: pointer;
-	line-height: 1.5;
 	font-size: 14px;
+	/* font-weight: 700; */
 `;

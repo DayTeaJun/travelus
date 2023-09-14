@@ -1,13 +1,12 @@
 import styled, { css } from 'styled-components';
 
-export const WrapAll = styled.section`
+export const WrapAll = styled.div`
 	background: white;
 	box-sizing: border-box;
-	height: 280px;
 	padding: 20px 20px 20px 20px;
 `;
 
-export const Scroll = styled.section`
+export const Scroll = styled.div`
 	overflow-x: scroll;
 	overflow-y: hidden;
 
@@ -81,7 +80,7 @@ export const ProductImg = styled.img`
 	border-radius: 8px;
 	border: 0.5px solid #dbdbdb;
 	object-fit: cover;
-	&:hover {
+	:hover {
 		border: 3px solid #81d8d0;
 		box-sizing: border-box;
 	}
@@ -103,15 +102,4 @@ export const ProductPrice = styled.span`
 	font-size: 12px;
 	font-weight: 700;
 	line-height: 15.02px;
-`;
-
-export const ProductCardWrap = styled.section`
-	width: 250px;
-	height: 250px;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	background-color: #fff;
-	border-radius: 5px;
 `;

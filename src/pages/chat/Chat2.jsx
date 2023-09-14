@@ -33,14 +33,12 @@ import {
 	Time,
 	HomeContainer,
 	ChatImg,
-	ChatUser,
-	ChatTitle,
 } from './chat.style';
-
+import ProfilePic from '../../assets/image/profilePic.png';
 import UploadPic from '../../assets/image/profileImageUploadButton.png';
 import Alpaca from '../../assets/image/alpaca.png';
 import ChatProfile from '../../assets/image/chatProfile2.jpg';
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from 'react-helmet';
 
 export default function Chat() {
 	const navigate = useNavigate();
@@ -69,24 +67,17 @@ export default function Chat() {
 				</Helmet>
 				<NavbarWrap spaceBetween>
 					<Backspace
-						aria-label='뒤로가기'
 						onClick={() => {
 							navigate(-1);
 						}}
 					/>
-					<ChatUser>여행조아 </ChatUser>
-					<OptionModalTab aria-label='더보기' onClick={handleModalOpen} />
+					여행조아 <OptionModalTab onClick={handleModalOpen} />
 				</NavbarWrap>
 				<HomeContainer>
-					<ChatTitle>여행조아 채팅방</ChatTitle>
-
 					<ChatBox>
 						<Column>
 							<MessageRow>
-								<ProfileImg
-									src={ChatProfile}
-									alt='여행조아 프로필 이미지입니다'
-								/>
+								<ProfileImg src={ChatProfile} />
 								<MessageText>
 									<ChatText>
 										안녕하세요~ 올려주신 상품을 보다가 궁금한 점이 있어서 메시지
@@ -100,10 +91,7 @@ export default function Chat() {
 						</Column>
 						<Column>
 							<MessageRow>
-								<ProfileImg
-									src={ChatProfile}
-									alt='여행조아 프로필 이미지입니다'
-								/>
+								<ProfileImg src={ChatProfile} />
 								<MessageText>
 									<ChatText>
 										그리고 해당 상품 가격도 안내부탁드리겠습니다.
@@ -131,7 +119,7 @@ export default function Chat() {
 								<Time>4:31</Time>
 
 								<ChatTextRight>
-									<ChatImg src={Alpaca} alt='알파카 이미지' />
+									<ChatImg src={Alpaca} />
 								</ChatTextRight>
 							</MessageRow2>
 						</Column>
@@ -153,12 +141,7 @@ export default function Chat() {
 				)}
 				<>
 					<UploadComment>
-						{
-							<ProfileImageComment
-								alt='이미지 추가버튼'
-								src={UploadPic}
-							></ProfileImageComment>
-						}
+						{<ProfileImageComment src={UploadPic}></ProfileImageComment>}
 						<CommentInputArea
 							placeholder='메세지 입력하기...'
 							rows={1}

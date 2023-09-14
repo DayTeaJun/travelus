@@ -1,16 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Backspace, NavbarWrap } from '../../components/navbar/navbar.style';
 import { BottomNavContainer } from '../../components/bottomnav/bottomnav.style';
-import {
-	SearchInput,
-	SearchWrap,
-	Wrapper,
-	NoData,
-	NoData2,
-	MoreBtn,
-	SearchTitle,
-} from './search.style';
-
+import { SearchInput, SearchWrap, Wrapper } from './search.style';
+import { API_URL } from '../../api.js';
+import axios from 'axios';
 import {
 	UserWrap,
 	UserFlexWrap,
@@ -24,21 +17,20 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import ProfilePic from '../../assets/image/profilePic.png';
-import { Helmet } from 'react-helmet-async';
-import Loading from '../../components/loading/Loading';
-import getSearchdata from '../../api/searchApi';
-import { useQuery } from '@tanstack/react-query';
+import { Helmet } from 'react-helmet';
 
 export default function Search() {
 	const navigate = useNavigate();
+
+	const url = API_URL;
+	const token = localStorage.getItem('token');
 	const [keyword, setKeyword] = useState('');
+	const [searchData, setSearchData] = useState([]);
 	const [debounceValue, setDebounceValue] = useState(keyword);
-	const [page, setPage] = useState(1);
 
 	const onChange = (event) => {
 		setKeyword(event.target.value);
 	};
-
 	const onErrorImg = (e) => {
 		e.target.src = ProfilePic;
 	};
@@ -53,27 +45,32 @@ export default function Search() {
 		};
 	}, [keyword]);
 
-	const { data: searchData, isLoading } = useQuery(
-		['searchData', debounceValue],
-		() => getSearchdata(debounceValue),
-		{
-			enabled: !!debounceValue,
-			select: (result) =>
-				result
-					.filter((user) => user.username.includes(debounceValue))
-					.slice(0, page * 10),
+	useEffect(() => {
+		if (debounceValue.length > 0) {
+			const getSearch = async () => {
+				try {
+					const res = await axios({
+						method: 'GET',
+						url: `${url}/user/searchuser/?keyword=${debounceValue}`,
+						headers: {
+							Authorization: `Bearer ${token}`,
+							'Content-type': 'application/json',
+						},
+					});
+					setSearchData(res.data);
+				} catch (error) {
+					console.log('에러입니다', error);
+				}
+			};
+			getSearch();
 		}
-	);
-
-	const onClickBtn = () => {
-		setPage(page + 1);
-	};
+	}, [debounceValue]);
 
 	const SearchColor = ({ user, word, type }) => {
 		return user.includes(word) ? (
 			<div type={type}>
 				{user.split(word)[0]}
-				<mark style={{ color: '#A6E3DA' }}>{debounceValue}</mark>
+				<span style={{ color: '#A6E3DA' }}>{debounceValue}</span>
 				{user.split(word)[1]}
 			</div>
 		) : (
@@ -88,36 +85,37 @@ export default function Search() {
 			</Helmet>
 			<NavbarWrap spaceBetween>
 				<Backspace
-					aria-label='뒤로가기'
 					onClick={() => {
 						navigate(-1);
 					}}
 				/>
 				<SearchInput
-					placeholder='계정을 검색해보세요.'
+					placeholder='계정 검색'
 					onChange={onChange}
 					value={keyword}
 				/>
 			</NavbarWrap>
 			<SearchWrap>
-				<SearchTitle>검색 결과</SearchTitle>
-
-				{searchData?.map((item) => {
+				{searchData.map((item) => {
 					return (
 						<Wrapper key={item.id}>
 							<UserWrap>
-								<UserFlexWrap
-									to={`/profile/${item.accountname}`}
-									aria-label={`${item.accountname} 프로필로 이동합니다.`}
-								>
+								<UserFlexWrap>
 									<UserProfileImg>
 										<UserFollowImage
 											src={item.image}
 											onError={onErrorImg}
 											alt='유저 프로필 이미지입니다.'
+											onClick={() => {
+												navigate(`/profile/${item.accountname}`);
+											}}
 										/>
 									</UserProfileImg>
-									<UserContent>
+									<UserContent
+										onClick={() => {
+											navigate(`/profile/${item.accountname}`);
+										}}
+									>
 										<UserFollowNickName>
 											<SearchColor
 												user={item.username}
@@ -138,18 +136,8 @@ export default function Search() {
 						</Wrapper>
 					);
 				})}
-				{searchData?.length > 0 && searchData?.length >= page * 10 && (
-					<MoreBtn onClick={onClickBtn}>더보기</MoreBtn>
-				)}
-				{searchData?.length === 0 && (
-					<>
-						<NoData>검색 결과가 없습니다.</NoData>
-						<NoData2>다른 검색어를 입력해보세요.</NoData2>
-					</>
-				)}
-				{debounceValue && isLoading && <Loading />}
+				<BottomNavContainer />
 			</SearchWrap>
-			<BottomNavContainer />
 		</>
 	);
 }

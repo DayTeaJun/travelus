@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const ProductContainer = styled.section`
+export const ProductContainer = styled.div`
 	padding: 26px 34px;
 	box-sizing: border-box;
 	display: flex;
@@ -8,7 +8,7 @@ export const ProductContainer = styled.section`
 	align-items: center;
 `;
 
-export const Upload = styled.section`
+export const Upload = styled.div`
 	display: flex;
 	justify-content: center;
 	position: relative;
@@ -54,7 +54,7 @@ export const BgBtnInputStyle = styled(InputStyle)`
 	}
 `;
 
-export const BgBtnCover = styled.section`
+export const BgBtnCover = styled.div`
 	position: absolute;
 	top: 31px;
 	width: 322px;
@@ -66,14 +66,14 @@ export const BgBtnCover = styled.section`
 	pointer-events: none;
 `;
 
-export const InputWrap = styled.section`
+export const InputWrap = styled.div`
 	display: flex;
 	flex-direction: column;
 	margin-top: 30px;
 	gap: 16px;
 `;
 
-export const InputList = styled.section`
+export const InputList = styled.div`
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
@@ -86,7 +86,7 @@ export const UploadImage = styled.img`
 	object-fit: cover;
 `;
 
-export const RadioCover = styled.section`
+export const RadioCover = styled.div`
 	margin-top: 14px;
 	display: flex;
 	gap: 10px;
@@ -107,13 +107,4 @@ export const RadioInput = styled.input`
 		background-color: #81d8d0;
 		border: none;
 	}
-`;
-
-export const ProductPrice = styled.span`
-	font-family: 'Suit-Regular';
-	display: block;
-	color: #81d8d0;
-	font-size: 12px;
-	font-weight: 700;
-	line-height: 15.02px;
 `;

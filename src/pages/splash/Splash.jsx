@@ -12,7 +12,7 @@ import {
 import Cat from '../../assets/image/cat.png';
 import Tail from '../../assets/image/tail.png';
 import Baggage from '../../assets/image/baggage.png';
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from 'react-helmet';
 
 export default function Splash() {
 	return (

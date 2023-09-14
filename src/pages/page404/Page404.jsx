@@ -17,9 +17,9 @@ import {
 	CatWrap,
 } from './page404.style';
 import { useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from 'react-helmet';
 
-export default function Page404(props) {
+export default function Page404() {
 	const navigate = useNavigate();
 	return (
 		<>
@@ -28,19 +28,19 @@ export default function Page404(props) {
 			</Helmet>
 
 			<Page404Wrap>
-				<NotFoundSign alt='에러페이지 경고문구' src={Sign} />
+				<NotFoundSign src={Sign} />
 				<NotFoundText>
 					404
 					<br />
-					{props.message ? <>{props.message} </> : <>page not Found </>}
+					Page not Found
 				</NotFoundText>
 				<CatWrap>
-					<Cat404Img alt='잠자는 고양이' src={Cat404} />
-					<LuggageImg alt='케리어 가방' src={Luggage} />
+					<Cat404Img src={Cat404} />
+					<LuggageImg src={Luggage} />
 					<AnimationWrap>
-						<SnoreLargeImg alt='z' src={Snore} />
-						<SnoreMediumImg alt='z' src={Snore} />
-						<SnoreSmallImg alt='z' src={Snore} />
+						<SnoreLargeImg src={Snore} />
+						<SnoreMediumImg src={Snore} />
+						<SnoreSmallImg src={Snore} />
 					</AnimationWrap>
 				</CatWrap>
 				<HomeButton

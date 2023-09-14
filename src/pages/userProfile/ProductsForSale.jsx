@@ -9,8 +9,9 @@ import {
 	ProductName,
 	ProductPrice,
 	SortedButton,
-	ProductCardWrap,
 } from './productsForSale.style';
+import axios from 'axios';
+import { API_URL } from '../../api.js';
 import {
 	CheckButtonWrap,
 	CheckLogout,
@@ -20,57 +21,96 @@ import {
 	ModalText,
 	ModalWrap,
 } from '../../components/modal/modal.style';
-import ProductCard from '../product/ProductCard';
-import noProduct from '../../assets/image/noProduct.png';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query';
-import { deleteProduct, getProduct } from '../../api/productApi';
+import { useNavigate } from 'react-router-dom';
 
-export default function ProductsForSale() {
+export default function ProductsForSale({ userAccountName }) {
 	const [productData, setProductData] = useState([]);
+	const [resProd, setResProd] = useState([]);
 	const [isModal, setIsModal] = useState(false);
 	const [isUserModal, setIsUserModal] = useState(false);
 	const [selectedProduct, setSelectedProduct] = useState(null);
-	const [selectedButton, setSelectedButton] = useState(0);
+	const [myProfile, setMyProfile] = useState();
 	const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
-	const [isCard, setIsCard] = useState(false);
+	const [selectedButton, setSelectedButton] = useState(0);
 	const navigate = useNavigate();
-
-	const accountUsername = useParams().accountUsername;
+	const accountname = userAccountName;
+	const url = API_URL;
+	const token = localStorage.getItem('token');
 	const data = localStorage.getItem('userAccountName');
 
-	const queryClient = useQueryClient();
-
-	const { data: resProd, isLoading } = useQuery(
-		['productForSale'],
-		({ accountname = accountUsername ? accountUsername : data }) =>
-			getProduct(accountname),
-		{
-			enabled: !!data,
+	useEffect(() => {
+		data && setMyProfile(data);
+		async function getProductForSale() {
+			const res = await axios({
+				method: 'GET',
+				url: `${url}/product/${accountname}/?limit=infinity`,
+				headers: {
+					Authorization: `Bearer ${token}`,
+					'Content-type': 'application/json',
+				},
+			});
+			setResProd(res.data.product);
 		}
-	);
-
-	
-
-	const deleteProductMutation = useMutation(deleteProduct, {
-		onSuccess: () => {
-			queryClient.invalidateQueries('productForSale');
-		},
-		onError: () => {
-			console.error('실패');
-		},
-	});
+		if (data) {
+			getProductForSale();
+		}
+	}, [data]);
 
 	const handleModalOpen = (item) => {
-		if (!accountUsername) {
-			setIsCard(true);
+		if (data === myProfile) {
+			setIsModal(true);
 			setIsUserModal(true);
 			setSelectedProduct(item);
 		} else {
-			setIsCard(true);
+			setIsModal(true);
 			setIsUserModal(false);
 			setSelectedProduct(item);
 		}
+	};
+
+	const handleModalClose = () => {
+		setIsModal(false);
+	};
+
+	const handleConfirmationModalOpen = () => {
+		setIsConfirmationModalOpen(true);
+	};
+
+	const handleConfirmationModalClose = () => {
+		setIsConfirmationModalOpen(false);
+	};
+
+	const handleDeleteProduct = async () => {
+		if (selectedProduct) {
+			setIsConfirmationModalOpen(false);
+			try {
+				const res = await axios({
+					method: 'DELETE',
+					url: `${url}/product/${selectedProduct.id}`,
+					headers: {
+						Authorization: `Bearer ${token}`,
+						'Content-type': 'application/json',
+					},
+				});
+				setResProd((prevProducts) =>
+					prevProducts.filter((product) => product.id !== selectedProduct.id)
+				);
+			} catch (error) {
+				console.error(error);
+			}
+		}
+	};
+
+	const viewProductOnWebsite = () => {
+		const url = `${selectedProduct.link}`;
+		window.open(url, '_blank');
+	};
+	const goToProductEdit = () => {
+		navigate('/product/edit', {
+			state: {
+				selectedProduct: selectedProduct,
+			},
+		});
 	};
 
 	const createProductList = (items) => {
@@ -92,7 +132,7 @@ export default function ProductsForSale() {
 	};
 
 	useEffect(() => {
-		if (!isLoading && resProd) {
+		if (resProd.length !== 0) {
 			const product = createProductList(resProd);
 			setProductData(product);
 		}
@@ -119,58 +159,9 @@ export default function ProductsForSale() {
 		setProductData(products);
 	};
 
-	const handleModalClose = (e, boolean = false) => {
-		if (e.target === e.currentTarget) {
-			setIsCard(boolean);
-			setIsModal(boolean);
-		}
-	};
-
-	const handleConfirmationModalOpen = (e, boolean = true) => {
-		if (e.target === e.currentTarget) {
-			setIsConfirmationModalOpen(boolean);
-		}
-	};
-
-	const handleConfirmationModalClose = (e, boolean = false) => {
-		if (e.target === e.currentTarget) {
-			setIsConfirmationModalOpen(boolean);
-		}
-	};
-
-	const handleCard = (boolean) => {
-		setIsCard(boolean);
-	};
-
-	const handleModal = (e, boolean) => {
-		if (e.target === e.currentTarget) {
-			setIsModal(boolean);
-		}
-	};
-
-	const handleDeleteProduct = async () => {
-		if (selectedProduct) {
-			deleteProductMutation.mutate(selectedProduct);
-			handleModalClose(true);
-		}
-	};
-
-	const viewProductOnWebsite = () => {
-		const url = `${selectedProduct.link}`;
-		window.open(url, '_blank');
-	};
-
-	const goToProductEdit = () => {
-		navigate('/product/edit', {
-			state: {
-				selectedProduct: selectedProduct,
-			},
-		});
-	};
-
 	return (
 		<>
-			{!isLoading && resProd && (
+			{resProd.length === 0 ? null : (
 				<WrapAll>
 					<Title>함께 떠나는 상품</Title>
 					<SortedButton
@@ -202,74 +193,41 @@ export default function ProductsForSale() {
 						🤑할인 상품
 					</SortedButton>
 					<Scroll>
-						<ProductsContainer>
-							{productData.length > 0 ? (
-								productData
-							) : (
-								<ProductList
-									style={{
-										margin: '-10px auto',
-									}}
-								>
-									<img style={{ width: '130px' }} src={noProduct} />
-									<ProductName style={{ marginTop: '2px' }}>
-										해당하는 상품이 없습니다
-									</ProductName>
-								</ProductList>
-							)}
-						</ProductsContainer>
+						<ProductsContainer>{productData}</ProductsContainer>
 					</Scroll>
 				</WrapAll>
 			)}
-			{isCard && (
-				<>
-					<DarkBackground onClick={(e) => handleModalClose(e)}>
-						<ProductCardWrap>
-							<ProductCard
-								item={selectedProduct}
-								handleCard={handleCard}
-								handleModal={handleModal}
-							/>
-						</ProductCardWrap>
-
-						{isModal && (
-							<DarkBackground onClick={(e) => handleModalClose(e)}>
-								<ModalWrap>
-									{isUserModal && (
-										<>
-											<ModalText
-												onClick={(e) => handleConfirmationModalOpen(e, true)}
-											>
-												삭제
-											</ModalText>
-											<ModalText onClick={goToProductEdit}>수정</ModalText>
-										</>
-									)}
-									<ModalText onClick={viewProductOnWebsite}>
-										웹사이트에서 상품 보기
-									</ModalText>
-								</ModalWrap>
-							</DarkBackground>
+			{isModal && (
+				<DarkBackground onClick={handleModalClose}>
+					<ModalWrap>
+						{isUserModal && (
+							<>
+								<ModalText onClick={handleConfirmationModalOpen}>
+									삭제
+								</ModalText>
+								<ModalText onClick={goToProductEdit}>수정</ModalText>
+							</>
 						)}
-						{isConfirmationModalOpen && (
-							<DarkBackground onClick={(e) => handleModalClose(e)}>
-								<CheckModalWrap>
-									<CheckMsg>삭제하시겠어요?</CheckMsg>
-									<CheckButtonWrap>
-										<CheckLogout
-											onClick={(e) => handleConfirmationModalClose(e, false)}
-										>
-											취소
-										</CheckLogout>
-										<CheckLogout check onClick={handleDeleteProduct}>
-											삭제
-										</CheckLogout>
-									</CheckButtonWrap>
-								</CheckModalWrap>
-							</DarkBackground>
-						)}
-					</DarkBackground>
-				</>
+						<ModalText onClick={viewProductOnWebsite}>
+							웹사이트에서 상품 보기
+						</ModalText>
+					</ModalWrap>
+				</DarkBackground>
+			)}
+			{isConfirmationModalOpen && (
+				<DarkBackground onClick={handleModalClose}>
+					<CheckModalWrap>
+						<CheckMsg>삭제하시겠어요?</CheckMsg>
+						<CheckButtonWrap>
+							<CheckLogout onClick={handleConfirmationModalClose}>
+								취소
+							</CheckLogout>
+							<CheckLogout check onClick={handleDeleteProduct}>
+								삭제
+							</CheckLogout>
+						</CheckButtonWrap>
+					</CheckModalWrap>
+				</DarkBackground>
 			)}
 		</>
 	);

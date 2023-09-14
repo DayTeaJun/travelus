@@ -9,7 +9,4 @@ export const GlobalStyle = createGlobalStyle`
     a {
         text-decoration: none;
     }
-    mark{
-        background-color: transparent;        
-    }
 `;

@@ -10,34 +10,15 @@ import postIconFill from '../../assets/icon/icon-post-fill.svg';
 import profileIconFill from '../../assets/icon/icon-profile-fill.svg';
 import { Link } from 'react-router-dom';
 
-export const BottomNav = styled.nav`
-	position: relative;
+export const BottomNav = styled.div`
+	position: fixed;
 	bottom: 0;
-	width: 100%;
+	width: 390px;
 	height: 50px;
 	display: flex;
 	background-color: white;
 	border-top: solid 1px #dbdbdb;
 `;
-// export const NavContent = styled.ul`
-// 	display: flex;
-// 	flex-direction: column;
-// 	align-items: center;
-// 	justify-content: space-between;
-// `;
-
-// export const NavList = styled.li`
-// 	display: flex;
-// 	flex-direction: column;
-// 	align-items: center;
-// 	justify-content: center;
-// 	flex-grow: 1;
-// 	gap: 4px;
-// 	font-size: 10px;
-// 	color: #767676;
-// 	text-decoration: none;
-// 	padding: 12px 0px 6px 0px;
-// `;
 
 export const NavLink = styled(Link)`
 	display: flex;
@@ -104,13 +85,11 @@ export function BottomNavContainer(props) {
 							? homeIconFill
 							: homeIcon
 					}
-					alt='홈버튼'
 					onMouseOver={handleMouseOver}
 					onMouseOut={handleMouseOut}
 				/>
 				<span className='nav-text'>홈</span>
 			</NavLink>
-
 			<NavLink to='/chat'>
 				<NavIcon
 					id='message'
@@ -121,13 +100,11 @@ export function BottomNavContainer(props) {
 							? messageIconFill
 							: messageIcon
 					}
-					alt='채팅 버튼'
 					onMouseOver={handleMouseOver}
 					onMouseOut={handleMouseOut}
 				/>
 				<span className='nav-text'>채팅</span>
 			</NavLink>
-
 			<NavLink to='/post/upload'>
 				<NavIcon
 					id='post'
@@ -138,14 +115,12 @@ export function BottomNavContainer(props) {
 							? postIconFill
 							: postIcon
 					}
-					alt='게시물 작성 버튼'
 					onMouseOver={handleMouseOver}
 					onMouseOut={handleMouseOut}
 				/>
 				<span className='nav-text'>게시물 작성</span>
 			</NavLink>
-
-			<NavLink to={`/profile`}>
+			<NavLink to={'/profile/myProfile/'}>
 				<NavIcon
 					id='profile'
 					src={
@@ -155,7 +130,6 @@ export function BottomNavContainer(props) {
 							? profileIconFill
 							: profileIcon
 					}
-					alt='프로필 버튼'
 					onMouseOver={handleMouseOver}
 					onMouseOut={handleMouseOut}
 				/>

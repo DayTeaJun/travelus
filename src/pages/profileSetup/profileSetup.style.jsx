@@ -35,8 +35,7 @@ export const ImageInput = styled.input`
 `;
 
 export const ProfileImage = styled.img`
-	width: 110px;
-	height: 110px;
+	width: 100%;
 	border-radius: 50%;
 	object-fit: cover;
 `;
@@ -57,15 +56,4 @@ export const FormElement = styled.div`
 export const LabelStyle = styled.label`
 	color: #767676;
 	font-size: 12px;
-`;
-
-export const LabelStyleImg = styled.label`
-	clip: rect(1px, 1px, 1px, 1px);
-	clip-path: inset(50%);
-	width: 1px;
-	height: 1px;
-	margin: -1px;
-	overflow: hidden;
-	padding: 0;
-	position: absolute;
 `;
